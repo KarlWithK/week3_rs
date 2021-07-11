@@ -44,8 +44,8 @@ impl Process {
         );
         match self.list_open_files() {
             None => println!(
-                "Warning: could not inspect file descriptors for this process! \
-                    It might have exited just as we were about to look at its fd table, \
+                "Warning: could not inspect file descriptors for this process! \n\
+                    It might have exited just as we were about to look at its fd table,\n\
                     or it might have exited a while ago and is waiting for the parent \
                     to reap it."
             ),
