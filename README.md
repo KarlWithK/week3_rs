@@ -1,2 +1,2 @@
 # week3_rs
-week3
+week3 is completed
