@@ -1,5 +1,4 @@
 use std::env;
-
 mod open_file;
 mod process;
 mod ps_utils;
@@ -10,11 +9,24 @@ fn main() {
         println!("Usage: {} <name or pid of target>", args[0]);
         std::process::exit(1);
     }
-    #[allow(unused)] // TODO: delete this line for Milestone 1
     let target = &args[1];
 
-    // TODO: Milestone 1: Get the target Process using psutils::get_target()
-    unimplemented!();
+    match ps_utils::get_target(target).expect("ps or pgrep encountered a problem") {
+        Some(process) => {
+            process.print();
+            ps_utils::get_child_processes(process.pid)
+                .expect("ps encountered a problem")
+                .iter()
+                .for_each(|child_process| child_process.print());
+        }
+        None => {
+            eprintln!(
+                "Target \"{}\" did not match any running PIDs or executables",
+                target
+            );
+            std::process::exit(1)
+        }
+    };
 }
 
 #[cfg(test)]
@@ -24,7 +36,7 @@ mod test {
     fn start_c_program(program: &str) -> Child {
         Command::new(program)
             .spawn()
-            .expect(&format!("Could not find {}. Have you run make?", program))
+            .unwrap_or_else(|_| panic!("Could not find {}. Have you run make?", program))
     }
 
     #[test]
